@@ -3,8 +3,7 @@ import bodyParser from 'body-parser';
 import https from 'https';
 import express from 'express';
 
-import postgreRouter from "@routes/postgre";
-import importRouter from "@routes/importXlsx";
+import xlsxRouter from "@routes/xlsx";
 import { ensureDir } from 'fs-extra';
 import { logger } from '@services/logger';
 
@@ -32,8 +31,7 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 ensureDir('./logs/')
 ensureDir('./uploads/xlsx/')
 ensureDir('./uploads/tepdinhkem/')
-app.use('/import', importRouter)
-app.use('/postgre', postgreRouter)
+app.use('/xlsx', xlsxRouter)
 app.listen(9000, async () => {
-  logger.info("Server is up! http://0.0.0.0:9000");
+  logger('startup').info("Server is up! http://0.0.0.0:9000");
 })

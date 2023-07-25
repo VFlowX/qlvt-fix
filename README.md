@@ -1,2 +1,3 @@
-# import
-Import mega app
+# Introduction
+Bug fix and auto script collection
+

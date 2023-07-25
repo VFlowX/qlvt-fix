@@ -50,6 +50,9 @@ dependencies:
   winston-daily-rotate-file:
     specifier: ^4.7.1
     version: 4.7.1(winston@3.10.0)
+  xlsx:
+    specifier: ^0.18.5
+    version: 0.18.5
 
 devDependencies:
   '@types/body-parser':

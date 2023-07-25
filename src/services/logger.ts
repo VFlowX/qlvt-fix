@@ -18,7 +18,11 @@ var transportErr = new (transports.DailyRotateFile)({
   zippedArchive: true,
   maxSize: '10m',
   level: 'error',
-  maxFiles: '30d'
+  maxFiles: '30d',
+  format: format.combine(
+    format.colorize(),
+    myFormat
+  )
 });
 
 var transportCombine = new (transports.DailyRotateFile)({
@@ -26,7 +30,24 @@ var transportCombine = new (transports.DailyRotateFile)({
   datePattern: 'YYYY-MM-DD',
   zippedArchive: true,
   maxSize: '10m',
-  maxFiles: '30d'
+  maxFiles: '30d',
+  format: format.combine(
+    format.colorize(),
+    myFormat
+  )
+});
+
+var transportAction = new (transports.DailyRotateFile)({
+  filename: path.join(logDir, 'action-%DATE%.log'),
+  datePattern: 'YYYY-MM-DD',
+  zippedArchive: true,
+  level: '',
+  maxSize: '10m',
+  maxFiles: '30d',
+  format: format.combine(
+    format.colorize(),
+    myFormat
+  )
 });
 
 var transportConsole = new (transports.Console)({
@@ -36,22 +57,47 @@ var transportConsole = new (transports.Console)({
   )
 });
 
-const logger = createLogger({
+const actionLog = createLogger({
   levels: config.syslog.levels,
   format: format.combine(
     timestamp({ format: timezoned }),
     myFormat,
-    label({ label: ' ' }),
+    label({ label: 'Action' }),
     errors({ stack: true }),
   ),
-  defaultMeta: { service: 'user-service' },
+  defaultMeta: { service: 'action-service' },
   transports: [
-    transportErr,
-    transportCombine,
-  ],
-});
+    transportAction,
+    transportConsole,
+  ]
+})
+
+
+const transportMethod: any = [
+  transportErr,
+  transportCombine,
+]
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(transportConsole);
+  transportMethod.push(transportConsole);
 }
 
-export { logger }
+const loggerTmp: any = {}
+const logger = (labelValue = '') => {
+  if (loggerTmp[labelValue]) return loggerTmp[labelValue]
+  else {
+    loggerTmp[labelValue] = createLogger({
+      levels: config.syslog.levels,
+      format: format.combine(
+        timestamp({ format: timezoned }),
+        myFormat,
+        label({ label: labelValue }),
+        errors({ stack: true }),
+      ),
+      defaultMeta: { service: 'user-service' },
+      transports: transportMethod,
+    })
+    return loggerTmp[labelValue]
+  }
+};
+
+export { logger, actionLog }

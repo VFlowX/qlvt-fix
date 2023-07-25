@@ -39,6 +39,7 @@
     "postgres": "^3.3.5",
     "shapefile": "^0.6.6",
     "winston": "^3.10.0",
-    "winston-daily-rotate-file": "^4.7.1"
+    "winston-daily-rotate-file": "^4.7.1",
+    "xlsx": "^0.18.5"
   }
 }
